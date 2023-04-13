@@ -27,11 +27,11 @@ impl Vector3 {
     #[inline]
     pub fn dot(l: Vector3, r: Vector3) -> f32 { l.x() * r.x() + l.y() * r.y() + l.z() * r.z() }
 
-    #[inline]
+    #[inline(always)]
     pub fn x(self) -> f32 { self.data[0] }
-    #[inline]
+    #[inline(always)]
     pub fn y(self) -> f32 { self.data[1] }
-    #[inline]
+    #[inline(always)]
     pub fn z(self) -> f32 { self.data[2] }
 
     #[inline]

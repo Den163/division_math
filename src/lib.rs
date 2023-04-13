@@ -1,5 +1,4 @@
 mod vector3;
-mod math;
 
+pub mod math;
 pub use vector3::*;
-pub use math::*;
