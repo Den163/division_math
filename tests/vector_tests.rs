@@ -1,5 +1,5 @@
 mod tests {
-    use division_math::{Vector3, math};
+    use division_math::{Vector3};
 
     #[test]
     fn vector_to_scalar_mul() {
@@ -23,6 +23,6 @@ mod tests {
         let v1 = Vector3::all(2f32);
         let norm = v1.normalized();
 
-        assert!((norm.magnitude() - 1f32).abs() <= math::EPSILON_32);
+        assert!((norm.magnitude() - 1f32).abs() <= f32::EPSILON);
     }
 }
