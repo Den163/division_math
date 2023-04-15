@@ -136,6 +136,7 @@ impl Neg for Vector4 {
 impl Index<usize> for Vector4 {
     type Output = f32;
 
+    #[inline]
     fn index(&self, index: usize) -> &Self::Output {
         assert!(index < 4);
 
@@ -144,6 +145,7 @@ impl Index<usize> for Vector4 {
 }
 
 impl IndexMut<usize> for Vector4 {
+    #[inline]
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         assert!(index < 4);
 

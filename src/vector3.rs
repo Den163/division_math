@@ -5,14 +5,14 @@ use crate::Vector4;
 #[derive(PartialEq, Copy, Clone)]
 #[repr(C)]
 pub struct Vector3 {
-    data: [f32;3],
+    data: [f32; 3],
 }
 
 impl Vector3 {
     #[inline]
-    pub fn new(x: f32, y: f32, z: f32) -> Vector3 { Vector3 { data: [x,y,z] } }
+    pub fn new(x: f32, y: f32, z: f32) -> Vector3 { Vector3 { data: [x, y, z] } }
     #[inline]
-    pub fn all(v: f32) -> Vector3 { Vector3 { data: [v,v,v] } }
+    pub fn all(v: f32) -> Vector3 { Vector3 { data: [v, v, v] } }
 
     #[inline]
     pub fn zero() -> Vector3 { Vector3::all(0f32) }
@@ -58,7 +58,7 @@ impl Vector3 {
     pub fn zyx(&self) -> Vector3 { Vector3::new(self.z(), self.y(), self.x()) }
 
     #[inline]
-    pub fn normalized(self) -> Vector3 { self * (1f32 / Vector3::dot(self, self).sqrt())  }
+    pub fn normalized(self) -> Vector3 { self * (1f32 / Vector3::dot(self, self).sqrt()) }
     #[inline]
     pub fn magnitude(self) -> f32 { Vector3::dot(self, self).sqrt() }
     #[inline]
@@ -142,6 +142,7 @@ impl Neg for Vector3 {
 impl Index<usize> for Vector3 {
     type Output = f32;
 
+    #[inline]
     fn index(&self, index: usize) -> &Self::Output {
         assert!(index < 3);
 
@@ -150,6 +151,7 @@ impl Index<usize> for Vector3 {
 }
 
 impl IndexMut<usize> for Vector3 {
+    #[inline]
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         assert!(index < 3);
 
