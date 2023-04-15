@@ -1,6 +1,9 @@
-use std::ops::{Add, Div, Index, Mul, Neg, Sub};
+use std::ops::{Add, Div, Index, IndexMut, Mul, Neg, Sub};
+use std::fmt::{Debug, Display, Formatter};
+use crate::Vector4;
 
-#[derive(PartialEq, Debug, Copy, Clone)]
+#[derive(PartialEq, Copy, Clone)]
+#[repr(C)]
 pub struct Vector3 {
     data: [f32;3],
 }
@@ -28,24 +31,31 @@ impl Vector3 {
     pub fn dot(l: Vector3, r: Vector3) -> f32 { l.x() * r.x() + l.y() * r.y() + l.z() * r.z() }
 
     #[inline(always)]
-    pub fn x(self) -> f32 { self.data[0] }
+    pub fn x(&self) -> f32 { self.data[0] }
     #[inline(always)]
-    pub fn y(self) -> f32 { self.data[1] }
+    pub fn y(&self) -> f32 { self.data[1] }
     #[inline(always)]
-    pub fn z(self) -> f32 { self.data[2] }
+    pub fn z(&self) -> f32 { self.data[2] }
+
+    #[inline(always)]
+    pub fn r(&self) -> f32 { self.x() }
+    #[inline(always)]
+    pub fn g(&self) -> f32 { self.y() }
+    #[inline(always)]
+    pub fn b(&self) -> f32 { self.z() }
 
     #[inline]
-    pub fn zyx(self) -> Vector3 { Vector3::new(self.z(), self.y(), self.x()) }
+    pub fn xyz(&self) -> Vector3 { Vector3::new(self.x(), self.y(), self.z()) }
     #[inline]
-    pub fn zxy(self) -> Vector3 { Vector3::new(self.z(), self.x(), self.y()) }
+    pub fn xzy(&self) -> Vector3 { Vector3::new(self.x(), self.z(), self.y()) }
     #[inline]
-    pub fn yzx(self) -> Vector3 { Vector3::new(self.y(), self.z(), self.x()) }
+    pub fn yxz(&self) -> Vector3 { Vector3::new(self.y(), self.x(), self.z()) }
     #[inline]
-    pub fn yxz(self) -> Vector3 { Vector3::new(self.y(), self.x(), self.z()) }
+    pub fn yzx(&self) -> Vector3 { Vector3::new(self.y(), self.z(), self.x()) }
     #[inline]
-    pub fn xzy(self) -> Vector3 { Vector3::new(self.x(), self.z(), self.y()) }
+    pub fn zxy(&self) -> Vector3 { Vector3::new(self.z(), self.x(), self.y()) }
     #[inline]
-    pub fn xyz(self) -> Vector3 { Vector3::new(self.x(), self.y(), self.z()) }
+    pub fn zyx(&self) -> Vector3 { Vector3::new(self.z(), self.y(), self.x()) }
 
     #[inline]
     pub fn normalized(self) -> Vector3 { self * (1f32 / Vector3::dot(self, self).sqrt())  }
@@ -53,6 +63,16 @@ impl Vector3 {
     pub fn magnitude(self) -> f32 { Vector3::dot(self, self).sqrt() }
     #[inline]
     pub fn magnitude_sqr(self) -> f32 { Vector3::dot(self, self) }
+
+    #[inline]
+    pub fn to_vec4_as_point(self) -> Vector4 {
+        Vector4::new(self.x(), self.y(), self.z(), 1.)
+    }
+
+    #[inline]
+    pub fn to_vec4_as_direction(self) -> Vector4 {
+        Vector4::new(self.x(), self.y(), self.z(), 0.)
+    }
 }
 
 
@@ -79,7 +99,7 @@ impl Mul<Vector3> for Vector3 {
 
     #[inline]
     fn mul(self, rhs: Vector3) -> Vector3 {
-        Vector3 { data: [self.x() * rhs.x(), self.y() * rhs.y(), self.z() * rhs.z()] }
+        Vector3::new(self.x() * rhs.x(), self.y() * rhs.y(), self.z() * rhs.z())
     }
 }
 
@@ -88,7 +108,7 @@ impl Mul<f32> for Vector3 {
 
     #[inline]
     fn mul(self, rhs: f32) -> Self::Output {
-        Vector3 { data: [self.x() * rhs, self.y() * rhs, self.z() * rhs ] }
+        Vector3::new(self.x() * rhs, self.y() * rhs, self.z() * rhs)
     }
 }
 
@@ -126,5 +146,29 @@ impl Index<usize> for Vector3 {
         assert!(index < 3);
 
         &self.data[index]
+    }
+}
+
+impl IndexMut<usize> for Vector3 {
+    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+        assert!(index < 3);
+
+        &mut self.data[index]
+    }
+}
+
+impl Debug for Vector3 {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Vector3")
+            .field("x", &self.data[0])
+            .field("y", &self.data[1])
+            .field("z", &self.data[2])
+            .finish()
+    }
+}
+
+impl Display for Vector3 {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        Debug::fmt(self, f)
     }
 }
