@@ -1,29 +1,29 @@
 use std::ops::{Add, Div, Index, IndexMut, Mul, Neg, Sub};
 use std::fmt::{Debug, Display, Formatter};
-use crate::Vector4;
+use crate::{Vector4};
 
 #[derive(PartialEq, Copy, Clone)]
 #[repr(C)]
 pub struct Vector3 {
-    data: [f32; 3],
+    pub xyz: [f32; 3],
 }
 
 impl Vector3 {
     #[inline]
-    pub fn new(x: f32, y: f32, z: f32) -> Vector3 { Vector3 { data: [x, y, z] } }
+    pub fn new(x: f32, y: f32, z: f32) -> Vector3 { Vector3 { xyz: [x, y, z] } }
     #[inline]
-    pub fn all(v: f32) -> Vector3 { Vector3 { data: [v, v, v] } }
+    pub fn all(v: f32) -> Vector3 { Vector3 { xyz: [v, v, v] } }
 
     #[inline]
     pub fn zero() -> Vector3 { Vector3::all(0f32) }
     #[inline]
     pub fn one() -> Vector3 { Vector3::all(1f32) }
     #[inline]
-    pub fn forward() -> Vector3 { Vector3 { data: [0f32, 0f32, 1f32] } }
+    pub fn forward() -> Vector3 { Vector3 { xyz: [0f32, 0f32, 1f32] } }
     #[inline]
-    pub fn right() -> Vector3 { Vector3 { data: [1f32, 0f32, 0f32] } }
+    pub fn right() -> Vector3 { Vector3 { xyz: [1f32, 0f32, 0f32] } }
     #[inline]
-    pub fn up() -> Vector3 { Vector3 { data: [0f32, 1f32, 0f32] } }
+    pub fn up() -> Vector3 { Vector3 { xyz: [0f32, 1f32, 0f32] } }
 
     #[inline]
     pub fn cross(l: Vector3, r: Vector3) -> Vector3 { (l * r.yzx() - l.yzx() * r).yzx() }
@@ -31,11 +31,11 @@ impl Vector3 {
     pub fn dot(l: Vector3, r: Vector3) -> f32 { l.x() * r.x() + l.y() * r.y() + l.z() * r.z() }
 
     #[inline(always)]
-    pub fn x(&self) -> f32 { self.data[0] }
+    pub fn x(&self) -> f32 { self.xyz[0] }
     #[inline(always)]
-    pub fn y(&self) -> f32 { self.data[1] }
+    pub fn y(&self) -> f32 { self.xyz[1] }
     #[inline(always)]
-    pub fn z(&self) -> f32 { self.data[2] }
+    pub fn z(&self) -> f32 { self.xyz[2] }
 
     #[inline(always)]
     pub fn r(&self) -> f32 { self.x() }
@@ -146,7 +146,7 @@ impl Index<usize> for Vector3 {
     fn index(&self, index: usize) -> &Self::Output {
         assert!(index < 3);
 
-        &self.data[index]
+        &self.xyz[index]
     }
 }
 
@@ -155,16 +155,16 @@ impl IndexMut<usize> for Vector3 {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         assert!(index < 3);
 
-        &mut self.data[index]
+        &mut self.xyz[index]
     }
 }
 
 impl Debug for Vector3 {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("Vector3")
-            .field("x", &self.data[0])
-            .field("y", &self.data[1])
-            .field("z", &self.data[2])
+            .field("x", &self.xyz[0])
+            .field("y", &self.xyz[1])
+            .field("z", &self.xyz[2])
             .finish()
     }
 }

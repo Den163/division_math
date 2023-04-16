@@ -1,6 +1,8 @@
+use std::fmt::{Debug, Display, Formatter};
 use std::ops::{Index, IndexMut, Mul};
 use crate::Vector4;
 
+#[derive(PartialEq, Copy, Clone)]
 #[repr(C)]
 pub struct Matrix4x4 {
     columns: [Vector4; 4],
@@ -68,3 +70,34 @@ impl Mul<f32> for Matrix4x4 {
         ])
     }
 }
+
+impl Mul<Matrix4x4> for Matrix4x4 {
+    type Output = Matrix4x4;
+
+    fn mul(self, rhs: Matrix4x4) -> Self::Output {
+        Matrix4x4::from_columns([
+            self[0] * rhs[0],
+            self[1] * rhs[1],
+            self[2] * rhs[2],
+            self[3] * rhs[3]
+        ])
+    }
+}
+
+impl Debug for Matrix4x4 {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Matrix4x4")
+            .field("c0: ", &self[0])
+            .field("c1: ", &self[1])
+            .field("c2: ", &self[2])
+            .field("c3: ", &self[3])
+            .finish()
+    }
+}
+
+impl Display for Matrix4x4 {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        Debug::fmt(self, f)
+    }
+}
+
