@@ -8,7 +8,8 @@ pub struct Vector2 {
 }
 
 impl Vector2 {
-
+    #[inline]
+    pub fn new(x: f32, y: f32) -> Vector2 { Vector2 {x, y} }
 }
 
 impl Index<usize> for Vector2 {

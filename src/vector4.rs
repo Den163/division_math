@@ -1,6 +1,6 @@
 use std::fmt::{Debug, Display, Formatter};
 use std::ops::{Add, Div, Index, IndexMut, Mul, Neg, Sub};
-use crate::{Vector2, Vector3};
+use crate::{Vector3};
 
 #[derive(PartialEq, Copy, Clone)]
 #[repr(C)]

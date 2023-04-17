@@ -1,4 +1,3 @@
-use std::borrow::Borrow;
 use std::ops::{Add, Div, Index, IndexMut, Mul, Neg, Sub};
 use std::fmt::{Debug, Display, Formatter};
 use crate::{Vector4};
