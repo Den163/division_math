@@ -135,28 +135,28 @@ impl Matrix4x4 {
         let c0 = self.c0; let c1 = self.c1;
         let c2 = self.c2; let c3 = self.c3;
 
-        let (coef00, coef02, coef03, coef04) = Matrix4x4::calc_mul_sub_acc(
+        let (coef00, coef02, coef03, coef04) = Matrix4x4::calc_ax_mul_ay_sub_b_mul_c(
             Vector4::new(c2[2], c1[2], c1[2], c2[1]),
             Vector4::new(c3[3], c3[3], c2[3], c3[3]),
             Vector4::new(c3[2], c3[2], c2[2], c3[1]),
             Vector4::new(c2[3], c1[3], c1[3], c2[3])
         ).into();
 
-        let (coef06, coef07, coef08, coef10) = Matrix4x4::calc_mul_sub_acc(
+        let (coef06, coef07, coef08, coef10) = Matrix4x4::calc_ax_mul_ay_sub_b_mul_c(
             Vector4::new(c1[1], c1[1], c2[1], c1[1]),
             Vector4::new(c3[3], c2[3], c3[2], c3[2]),
             Vector4::new(c3[1], c2[1], c3[1], c3[1]),
             Vector4::new(c1[3], c1[3], c2[2], c1[2])
         ).into();
 
-        let (coef11, coef12, coef14, coef15) = Matrix4x4::calc_mul_sub_acc(
+        let (coef11, coef12, coef14, coef15) = Matrix4x4::calc_ax_mul_ay_sub_b_mul_c(
             Vector4::new(c1[1], c2[0], c1[0], c1[0]),
             Vector4::new(c2[2], c3[3], c3[3], c2[3]),
             Vector4::new(c2[1], c3[0], c3[0], c2[0]),
             Vector4::new(c1[2], c2[3], c1[3], c1[3])
         ).into();
 
-        let (coef16, coef18, coef19, coef20) = Matrix4x4::calc_mul_sub_acc(
+        let (coef16, coef18, coef19, coef20) = Matrix4x4::calc_ax_mul_ay_sub_b_mul_c(
             Vector4::new(c2[0], c1[0], c1[0], c2[0]),
             Vector4::new(c3[2], c3[2], c2[2], c3[1]),
             Vector4::new(c3[0], c3[0], c2[0], c3[0]),
@@ -178,10 +178,10 @@ impl Matrix4x4 {
         let vec2 = Vector4::new(c1[2], c0[2], c0[2], c0[2]);
         let vec3 = Vector4::new(c1[3], c0[3], c0[3], c0[3]);
 
-        let inv0 = vec1 * fac0 - vec2 * fac1 + vec3 * fac2;
-        let inv1 = vec0 * fac0 - vec2 * fac3 + vec3 * fac4;
-        let inv2 = vec0 * fac1 - vec1 * fac3 + vec3 * fac5;
-        let inv3 = vec0 * fac2 - vec1 * fac4 + vec2 * fac5;
+        let inv0 = Matrix4x4::calc_ax_mul_ay_sub_b_mul_c(vec1, fac0, vec2, fac1) + vec3 * fac2;
+        let inv1 = Matrix4x4::calc_ax_mul_ay_sub_b_mul_c(vec0, fac0, vec2, fac3) + vec3 * fac4;
+        let inv2 = Matrix4x4::calc_ax_mul_ay_sub_b_mul_c(vec0, fac1, vec1, fac3) + vec3 * fac5;
+        let inv3 = Matrix4x4::calc_ax_mul_ay_sub_b_mul_c(vec0, fac2, vec1, fac4) + vec2 * fac5;
 
         let sign_a = Vector4::new(1., -1., 1., -1.);
         let sign_b = Vector4::new(-1., 1., -1., 1.);
@@ -199,9 +199,10 @@ impl Matrix4x4 {
         inverse * one_over_determinant
     }
 
+    /// calculate ax * ay - b * c
     #[inline(always)]
     #[cfg(target_arch = "aarch64")]
-    fn calc_mul_sub_acc(ax: Vector4, ay: Vector4, b: Vector4, c: Vector4) -> Vector4 {
+    fn calc_ax_mul_ay_sub_b_mul_c(ax: Vector4, ay: Vector4, b: Vector4, c: Vector4) -> Vector4 {
         unsafe {
             let l_acc = vld1q_f32(&ax as *const Vector4 as *const f32);
             let r_acc = vld1q_f32(&ay as *const Vector4 as *const f32);
