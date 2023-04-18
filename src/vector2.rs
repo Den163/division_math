@@ -28,6 +28,8 @@ impl Index<usize> for Vector2 {
 }
 
 impl IndexMut<usize> for Vector2 {
+
+    #[inline]
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         assert!(index < 2);
 

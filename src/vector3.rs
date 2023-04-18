@@ -128,6 +128,7 @@ impl Neg for Vector3 {
 impl Index<usize> for Vector3 {
     type Output = f32;
 
+    #[inline]
     fn index(&self, index: usize) -> &Self::Output {
         assert!(index < 3);
 
@@ -139,6 +140,7 @@ impl Index<usize> for Vector3 {
 }
 
 impl IndexMut<usize> for Vector3 {
+
     #[inline]
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         assert!(index < 3);
