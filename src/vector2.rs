@@ -1,5 +1,5 @@
 use std::fmt::{Debug};
-use std::ops::{Index, IndexMut};
+use std::ops::{Index, IndexMut, Mul};
 
 #[repr(C)]
 #[derive(PartialEq, Copy, Clone, Debug)]
@@ -38,4 +38,16 @@ impl IndexMut<usize> for Vector2 {
             ptr.add(index).as_mut().unwrap()
         }
     }
+}
+
+impl Mul<Vector2> for Vector2 {
+    type Output = Vector2;
+
+    fn mul(self, rhs: Self) -> Self::Output { Vector2::new(self.x * rhs.x, self.y * rhs.y) }
+}
+
+impl Mul<f32> for Vector2 {
+    type Output = Vector2;
+
+    fn mul(self, rhs: f32) -> Self::Output { Vector2::new(self.x * rhs, self.y * rhs) }
 }

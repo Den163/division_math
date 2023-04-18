@@ -15,7 +15,7 @@ fn bench_vec() {
     println!("result: {:?}", acc);
 }
 
-#[inline(never)]
+#[no_mangle]
 fn get_vec_accum() -> Vector3 {
     let mut acc = Vector3::zero();
     for i in 0..((1000000000/4)*4) {
@@ -38,10 +38,15 @@ fn bench_mat() {
     println!("result: {:?}", acc);
 }
 
+#[no_mangle]
 fn get_mat_accum() -> Matrix4x4 {
-    let m = Matrix4x4::identity();
-    let m = m * 13.;
+    let mut m = Matrix4x4::identity();
+    m = m * 13.;
 
-    m.inverse()
+    for _i in 0..(10000/4)*4 {
+        m = m.inverse();
+    }
+
+    m
 }
 
