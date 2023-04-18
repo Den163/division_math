@@ -1,8 +1,8 @@
 use std::ops::{Add, Div, Index, IndexMut, Mul, Neg, Sub};
-use std::fmt::{Debug, Display, Formatter};
+use std::fmt::{Debug};
 use crate::{Vector4};
 
-#[derive(PartialEq, Copy, Clone)]
+#[derive(PartialEq, Copy, Clone, Debug)]
 #[repr(C)]
 pub struct Vector3 {
     pub x: f32,
@@ -147,21 +147,5 @@ impl IndexMut<usize> for Vector3 {
             let ptr = self as *mut Vector3 as *mut f32;
             ptr.add(index).as_mut().unwrap()
         }
-    }
-}
-
-impl Debug for Vector3 {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("Vector3")
-            .field("x", &self.x)
-            .field("y", &self.y)
-            .field("z", &self.z)
-            .finish()
-    }
-}
-
-impl Display for Vector3 {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        Debug::fmt(self, f)
     }
 }

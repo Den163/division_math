@@ -10,4 +10,4 @@ pub use vector3::*;
 pub use vector4::*;
 pub use matrix4x4::*;
 
-include!(concat!(env!("OUT_DIR"), "/vector_swizzles.gen.rs"));
+include!(concat!(env!("OUT_DIR"), "/vector.swizzling.gen.rs"));

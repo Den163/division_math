@@ -9,7 +9,7 @@ fn main() {
     let time_diff = time_before.elapsed().unwrap();
 
     println!("Time past: {} ms", time_diff.as_secs_f32() * 1000f32);
-    println!("result: {}", acc);
+    println!("result: {:?}", acc);
 }
 
 #[inline(never)]

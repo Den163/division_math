@@ -1,6 +1,6 @@
 use std::fmt::{Debug, Display, Formatter};
 use std::ops::{Add, Div, Index, IndexMut, Mul, Neg, Sub};
-use crate::{Vector3};
+use crate::{Vector2, Vector3};
 
 #[derive(PartialEq, Copy, Clone)]
 #[repr(C)]
@@ -14,6 +14,13 @@ pub struct Vector4 {
 impl Vector4 {
     #[inline]
     pub fn new(x: f32, y: f32, z: f32, w: f32) -> Vector4 { Vector4 { x, y, z, w } }
+    #[inline]
+    pub fn from_x_yzw(x: f32, yzw: Vector3) -> Vector4 { Vector4::new(x, yzw.x, yzw.y, yzw.z) }
+    #[inline]
+    pub fn from_xy_zw(xy: Vector2, zw: Vector2) -> Vector4 { Vector4::new(xy.x, xy.y, zw.x, zw.y) }
+    #[inline]
+    pub fn from_xyz_w(xyz: Vector3, w: f32) -> Vector4 { Vector4::new(xyz.z, xyz.y, xyz.z, w) }
+
     #[inline]
     pub fn all(v: f32) -> Vector4 { Vector4::new(v,v,v,v) }
 
@@ -167,11 +174,5 @@ impl Debug for Vector4 {
 impl Display for Vector4 {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         Debug::fmt(self, f)
-    }
-}
-
-impl Into<Vector3> for Vector4 {
-    fn into(self) -> Vector3 {
-        Vector3::new(self.x, self.y, self.z)
     }
 }

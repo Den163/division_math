@@ -1,7 +1,8 @@
+use std::fmt::{Debug};
 use std::ops::{Index, IndexMut};
 
 #[repr(C)]
-#[derive(PartialEq, Copy, Clone)]
+#[derive(PartialEq, Copy, Clone, Debug)]
 pub struct Vector2 {
     pub x: f32,
     pub y: f32
