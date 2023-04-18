@@ -150,6 +150,7 @@ impl Mul<f32> for Matrix4x4 {
 impl Mul<Matrix4x4> for Matrix4x4 {
     type Output = Matrix4x4;
 
+    #[inline]
     fn mul(self, rhs: Matrix4x4) -> Self::Output {
         Matrix4x4::from_columns(
             self[0] * rhs[0],

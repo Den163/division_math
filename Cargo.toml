@@ -10,7 +10,9 @@ edition = "2021"
 [build-dependencies]
 itertools = "0.10.5"
 
-[profile.release]
+[profile.relwithdebug]
+inherits="release"
+debug=true
 
 [[bin]]
 name = "profile"
