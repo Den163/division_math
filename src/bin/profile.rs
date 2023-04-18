@@ -43,7 +43,7 @@ fn get_mat_accum() -> Matrix4x4 {
     let mut m = Matrix4x4::identity();
     m = m * 13.;
 
-    for _i in 0..(10000/4)*4 {
+    for _i in 0..(1000000/4)*4 {
         m = m.inverse();
     }
 

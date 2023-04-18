@@ -176,3 +176,7 @@ impl Display for Vector4 {
         Debug::fmt(self, f)
     }
 }
+
+impl From<Vector4> for (f32, f32, f32, f32) {
+    fn from(value: Vector4) -> Self { (value.x, value.y, value.z, value.w) }
+}
