@@ -68,7 +68,7 @@ impl Vector4 {
         unsafe {
             let mut result = MaybeUninit::<Vector4>::uninit();
             vst1q_f32(result.as_mut_ptr() as *mut f32, neon_ptr);
-            result.assume_init()
+            *result.as_ptr()
         }
     }
 
