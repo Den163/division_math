@@ -16,3 +16,7 @@ itertools = "0.10.5"
 [profile.relwithdebug]
 inherits="release"
 debug=true
+
+[features]
+default = [ "enable_simd" ]
+enable_simd = []
