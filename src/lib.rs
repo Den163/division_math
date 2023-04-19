@@ -10,4 +10,6 @@ pub use vector3::*;
 pub use vector4::*;
 pub use matrix4x4::*;
 
+pub(crate) mod simd;
+
 include!(concat!(env!("OUT_DIR"), "/vector.swizzling.gen.rs"));

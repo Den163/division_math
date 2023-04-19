@@ -49,6 +49,11 @@ impl Vector4 {
     pub fn magnitude(self) -> f32 { Vector4::dot(self, self).sqrt() }
     #[inline]
     pub fn magnitude_sqr(self) -> f32 { Vector4::dot(self, self) }
+
+    #[inline]
+    pub fn as_c_ptr(&self) -> *const f32 { self as *const Vector4 as *const f32 }
+    #[inline]
+    pub fn as_c_mut_ptr(&mut self) -> *mut f32 { self as *mut Vector4 as *mut f32 }
 }
 
 impl Add<Vector4> for Vector4 {
@@ -56,12 +61,12 @@ impl Add<Vector4> for Vector4 {
 
     #[inline]
     fn add(self, rhs: Vector4) -> Vector4 {
-        Vector4::new(
-            self.x + rhs.x,
-            self.y + rhs.y,
-            self.z + rhs.z,
-            self.w + rhs.w,
-        )
+        if cfg!(target_arch = "aarch64") {
+            Vector4::add_neon(self, rhs)
+        }
+        else {
+            Vector4::new(self.x + rhs.x, self.y + rhs.y, self.z + rhs.z, self.w + rhs.w)
+        }
     }
 }
 
@@ -70,12 +75,11 @@ impl Sub<Vector4> for Vector4 {
 
     #[inline]
     fn sub(self, rhs: Vector4) -> Vector4 {
-        Vector4::new(
-            self.x - rhs.x,
-            self.y - rhs.y,
-            self.z - rhs.z,
-            self.w - rhs.w,
-        )
+        if cfg!(target_arch = "aarch64") {
+            Vector4::sub_neon(self, rhs)
+        } else {
+            Vector4::new(self.x - rhs.x, self.y - rhs.y, self.z - rhs.z, self.w - rhs.w)
+        }
     }
 }
 
@@ -84,12 +88,12 @@ impl Mul<Vector4> for Vector4 {
 
     #[inline]
     fn mul(self, rhs: Vector4) -> Vector4 {
-        Vector4::new(
-            self.x * rhs.x,
-            self.y * rhs.y,
-            self.z * rhs.z,
-            self.w * rhs.w,
-        )
+        if cfg!(target_arch = "aarch64") {
+            Vector4::mul_neon(self, rhs)
+        }
+        else {
+            Vector4::new(self.x * rhs.x, self.y * rhs.y, self.z * rhs.z, self.w * rhs.w)
+        }
     }
 }
 
@@ -98,7 +102,12 @@ impl Mul<f32> for Vector4 {
 
     #[inline]
     fn mul(self, rhs: f32) -> Self::Output {
-        Vector4::new(self.x * rhs, self.y * rhs, self.z * rhs, self.w * rhs)
+        if cfg!(target_arch = "aarch64") {
+            Vector4::mul_scalar_neon(self, rhs)
+        }
+        else {
+            Vector4::new(self.x * rhs, self.y * rhs, self.z * rhs, self.w * rhs)
+        }
     }
 }
 
@@ -107,12 +116,11 @@ impl Div<Vector4> for Vector4 {
 
     #[inline]
     fn div(self, rhs: Vector4) -> Self::Output {
-        Vector4::new(
-            self.x / rhs.x,
-            self.y / rhs.y,
-            self.z / rhs.z,
-            self.w / rhs.w,
-        )
+        if cfg!(target_arch = "aarch64") {
+            Vector4::div_neon(self, rhs)
+        } else {
+            Vector4::new(self.x / rhs.x, self.y / rhs.y, self.z / rhs.z, self.w / rhs.w, )
+        }
     }
 }
 
@@ -121,7 +129,11 @@ impl Div<f32> for Vector4 {
 
     #[inline]
     fn div(self, rhs: f32) -> Self::Output {
-        Vector4::new(self.x / rhs, self.y / rhs, self.z / rhs, self.w / rhs)
+        if cfg!(target_arch = "aarch64") {
+            Vector4::div_scalar_neon(self, rhs)
+        } else {
+            Vector4::new(self.x / rhs, self.y / rhs, self.z / rhs, self.w / rhs)
+        }
     }
 }
 
@@ -178,5 +190,6 @@ impl Display for Vector4 {
 }
 
 impl From<Vector4> for (f32, f32, f32, f32) {
+    #[inline]
     fn from(value: Vector4) -> Self { (value.x, value.y, value.z, value.w) }
 }
