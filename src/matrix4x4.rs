@@ -37,6 +37,16 @@ impl Matrix4x4 {
     }
 
     #[inline]
+    pub fn scale(scale: Vector4) -> Matrix4x4 {
+        Matrix4x4 {
+            c0: Vector4::new(scale.x, 0., 0., 0.),
+            c1: Vector4::new(0., scale.y, 0., 0.),
+            c2: Vector4::new(0., 0., scale.z, 0.),
+            c3: Vector4::new(0., 0., 0., scale.w)
+        }
+    }
+
+    #[inline]
     pub fn zero() -> Matrix4x4 { Matrix4x4::all(0.) }
 
     #[inline]
