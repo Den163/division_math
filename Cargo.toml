@@ -18,5 +18,4 @@ inherits="release"
 debug=true
 
 [features]
-default = [ "enable_simd" ]
 enable_simd = []
