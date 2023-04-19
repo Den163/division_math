@@ -2,7 +2,7 @@ use std::arch::aarch64::{float32x4_t, vaddq_f32, vdivq_f32, vld1q_f32, vmulq_f32
 use std::mem::MaybeUninit;
 use crate::{Vector4};
 
-#[cfg(target_arch = "aarch64")]
+#[cfg(target_feature = "neon")]
 impl Vector4 {
     #[inline(always)]
     pub(crate) fn mul_neon(lhs: Vector4, rhs: Vector4) -> Vector4 {

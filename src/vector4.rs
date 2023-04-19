@@ -61,7 +61,7 @@ impl Add<Vector4> for Vector4 {
 
     #[inline]
     fn add(self, rhs: Vector4) -> Vector4 {
-        if cfg!(target_arch = "aarch64") {
+        if cfg!(target_feature = "neon") {
             Vector4::add_neon(self, rhs)
         }
         else {
@@ -75,7 +75,7 @@ impl Sub<Vector4> for Vector4 {
 
     #[inline]
     fn sub(self, rhs: Vector4) -> Vector4 {
-        if cfg!(target_arch = "aarch64") {
+        if cfg!(target_feature = "neon") {
             Vector4::sub_neon(self, rhs)
         } else {
             Vector4::new(self.x - rhs.x, self.y - rhs.y, self.z - rhs.z, self.w - rhs.w)
@@ -88,7 +88,7 @@ impl Mul<Vector4> for Vector4 {
 
     #[inline]
     fn mul(self, rhs: Vector4) -> Vector4 {
-        if cfg!(target_arch = "aarch64") {
+        if cfg!(target_feature = "neon") {
             Vector4::mul_neon(self, rhs)
         }
         else {
@@ -102,7 +102,7 @@ impl Mul<f32> for Vector4 {
 
     #[inline]
     fn mul(self, rhs: f32) -> Self::Output {
-        if cfg!(target_arch = "aarch64") {
+        if cfg!(target_feature = "neon") {
             Vector4::mul_scalar_neon(self, rhs)
         }
         else {
@@ -116,7 +116,7 @@ impl Div<Vector4> for Vector4 {
 
     #[inline]
     fn div(self, rhs: Vector4) -> Self::Output {
-        if cfg!(target_arch = "aarch64") {
+        if cfg!(target_feature = "neon") {
             Vector4::div_neon(self, rhs)
         } else {
             Vector4::new(self.x / rhs.x, self.y / rhs.y, self.z / rhs.z, self.w / rhs.w, )
@@ -129,7 +129,7 @@ impl Div<f32> for Vector4 {
 
     #[inline]
     fn div(self, rhs: f32) -> Self::Output {
-        if cfg!(target_arch = "aarch64") {
+        if cfg!(target_feature = "neon") {
             Vector4::div_scalar_neon(self, rhs)
         } else {
             Vector4::new(self.x / rhs, self.y / rhs, self.z / rhs, self.w / rhs)
