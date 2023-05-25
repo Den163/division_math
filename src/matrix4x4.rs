@@ -1,6 +1,6 @@
 use std::fmt::{Debug, Display, Formatter};
 use std::ops::{Index, IndexMut, Mul};
-use crate::{Vector4};
+use crate::{Vector4, Vector3};
 
 
 #[derive(PartialEq, Copy, Clone)]
@@ -49,16 +49,15 @@ impl Matrix4x4 {
 
     #[inline]
     pub fn ortho(left: f32, right: f32, bottom: f32, top: f32, near: f32, far: f32) -> Self {
+        let dx = 1. / (right - left);
+        let dy = 1. / (top - bottom);
+        let dz = 1. / (far - near);
+
         Matrix4x4::from_columns(
-            Vector4::new(2. / (right - left), 0., 0., 0.),
-            Vector4::new(0., 2. / (top - bottom), 0., 0.),
-            Vector4::new(0., 0., -2. / (far - near), 0.),
-            Vector4::new(
-                -(right + left) / (right - left),
-                -(top + bottom) / (top - bottom),
-                -(far + near) / (far - near),
-                1.,
-            ),
+            Vector4::new(2. * dx, 0., 0., -(right + left) * dx),
+            Vector4::new(0., 2. * dy, 0., -(top + bottom) * dy),
+            Vector4::new(0., 0., -2. * dz, -(far + near) * dz),
+            Vector4::new(0., 0., 0., 1.)
         )
     }
 
