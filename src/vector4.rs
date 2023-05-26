@@ -59,81 +59,96 @@ impl Vector4 {
 impl Add<Vector4> for Vector4 {
     type Output = Vector4;
 
+    #[cfg(feature="enable_simd")]
     #[inline]
     fn add(self, rhs: Vector4) -> Vector4 {
-        if cfg!(feature="enable_simd") {
-            Vector4::add_simd(self, rhs)
-        }
-        else {
-            Vector4::new(self.x + rhs.x, self.y + rhs.y, self.z + rhs.z, self.w + rhs.w)
-        }
+        Vector4::add_simd(self, rhs)
+    }
+
+    #[cfg(not(feature="enable_simd"))]
+    #[inline]
+    fn add(self, rhs: Vector4) -> Vector4 {
+        Vector4::new(self.x + rhs.x, self.y + rhs.y, self.z + rhs.z, self.w + rhs.w)
     }
 }
 
 impl Sub<Vector4> for Vector4 {
     type Output = Vector4;
 
+    #[cfg(feature="enable_simd")]
     #[inline]
     fn sub(self, rhs: Vector4) -> Vector4 {
-        if cfg!(feature = "enable_simd") {
-            Vector4::sub_simd(self, rhs)
-        } else {
-            Vector4::new(self.x - rhs.x, self.y - rhs.y, self.z - rhs.z, self.w - rhs.w)
-        }
+        Vector4::sub_simd(self, rhs)
+    }
+
+    #[cfg(not(feature="enable_simd"))]
+    #[inline]
+    fn sub(self, rhs: Vector4) -> Vector4 {
+        Vector4::new(self.x - rhs.x, self.y - rhs.y, self.z - rhs.z, self.w - rhs.w)
     }
 }
 
 impl Mul<Vector4> for Vector4 {
     type Output = Vector4;
 
+    #[cfg(feature="enable_simd")]
     #[inline]
     fn mul(self, rhs: Vector4) -> Vector4 {
-        if cfg!(feature = "enable_simd") {
-            Vector4::mul_simd(self, rhs)
-        }
-        else {
-            Vector4::new(self.x * rhs.x, self.y * rhs.y, self.z * rhs.z, self.w * rhs.w)
-        }
+        Vector4::mul_simd(self, rhs)
+    }
+
+    #[cfg(not(feature="enable_simd"))]
+    #[inline]
+    fn mul(self, rhs: Vector4) -> Vector4 {
+        Vector4::new(self.x * rhs.x, self.y * rhs.y, self.z * rhs.z, self.w * rhs.w)
     }
 }
 
 impl Mul<f32> for Vector4 {
     type Output = Vector4;
 
+    #[cfg(feature="enable_simd")]
     #[inline]
     fn mul(self, rhs: f32) -> Self::Output {
-        if cfg!(feature = "enable_simd") {
-            Vector4::mul_scalar_simd(self, rhs)
-        }
-        else {
-            Vector4::new(self.x * rhs, self.y * rhs, self.z * rhs, self.w * rhs)
-        }
+        Vector4::mul_scalar_simd(self, rhs)
+    }
+
+    #[cfg(not(feature="enable_simd"))]
+    #[inline]
+    fn mul(self, rhs: f32) -> Self::Output {
+        Vector4::new(self.x * rhs, self.y * rhs, self.z * rhs, self.w * rhs)
     }
 }
 
 impl Div<Vector4> for Vector4 {
     type Output = Vector4;
 
+    #[cfg(feature="enable_simd")]
     #[inline]
     fn div(self, rhs: Vector4) -> Self::Output {
-        if cfg!(feature = "enable_simd") {
-            Vector4::div_simd(self, rhs)
-        } else {
-            Vector4::new(self.x / rhs.x, self.y / rhs.y, self.z / rhs.z, self.w / rhs.w, )
-        }
+        Vector4::div_simd(self, rhs)
+    }
+
+    #[cfg(not(feature="enable_simd"))]
+    #[inline]
+    fn div(self, rhs: Vector4) -> Self::Output {
+        Vector4::new(self.x / rhs.x, self.y / rhs.y, self.z / rhs.z, self.w / rhs.w, )
     }
 }
 
 impl Div<f32> for Vector4 {
     type Output = Vector4;
 
+    #[cfg(feature="enable_simd")]
     #[inline]
     fn div(self, rhs: f32) -> Self::Output {
-        if cfg!(feature = "enable_simd") {
-            Vector4::div_scalar_simd(self, rhs)
-        } else {
-            Vector4::new(self.x / rhs, self.y / rhs, self.z / rhs, self.w / rhs)
-        }
+        Vector4::div_scalar_simd(self, rhs)
+    }
+
+    #[cfg(not(feature="enable_simd"))]
+    #[inline]
+    fn div(self, rhs: f32) -> Self::Output {
+        Vector4::new(self.x / rhs, self.y / rhs, self.z / rhs, self.w / rhs)
     }
 }
 
