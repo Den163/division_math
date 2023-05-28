@@ -56,7 +56,7 @@ impl Matrix4x4 {
         Matrix4x4::from_columns(
             Vector4::new(2. * dx, 0., 0., -(right + left) * dx),
             Vector4::new(0., 2. * dy, 0., -(top + bottom) * dy),
-            Vector4::new(0., 0., -2. * dz, -(far + near) * dz),
+            Vector4::new(0., 0., dz, -near * dz),
             Vector4::new(0., 0., 0., 1.)
         )
     }
