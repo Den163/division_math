@@ -151,7 +151,7 @@ impl Index<usize> for Matrix4x4 {
 
         unsafe {
             let ptr = self as *const Matrix4x4 as *const Vector4;
-            ptr.add(index).as_ref().unwrap()
+            & *ptr.add(index)
         }
     }
 }
@@ -163,7 +163,7 @@ impl IndexMut<usize> for Matrix4x4 {
 
         unsafe {
             let ptr = self as *mut Matrix4x4 as *mut Vector4;
-            ptr.add(index).as_mut().unwrap()
+            &mut *ptr.add(index)
         }
     }
 }

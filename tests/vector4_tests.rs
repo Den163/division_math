@@ -27,4 +27,14 @@ mod tests {
 
         assert!((norm.magnitude() - 1f32).abs() <= f32::EPSILON);
     }
+
+    #[test]
+    #[inline(never)]
+    fn vector_index() {
+        let mut v = Vector4::new(1., 2., 3., 4.);
+        let expected = 10.;
+        v[2] = expected;
+
+        assert_eq!(v.z, expected);
+    }
 }

@@ -235,7 +235,7 @@ impl Index<usize> for Vector4 {
 
         unsafe {
             let ptr = self as *const Vector4 as *const f32;
-            ptr.add(index).as_ref().unwrap()
+            & *ptr.add(index)
         }
     }
 }
@@ -247,7 +247,7 @@ impl IndexMut<usize> for Vector4 {
 
         unsafe {
             let ptr = self as *mut Vector4 as *mut f32;
-            ptr.add(index).as_mut().unwrap()
+            &mut *ptr.add(index)
         }
     }
 }
