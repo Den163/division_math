@@ -1,5 +1,5 @@
 mod tests {
-    use division_math::{Matrix4x4, Vector4, Vector3};
+    use division_math::{Matrix4x4, Vector3};
 
     #[test]
     pub fn matrix_inverse_test() {
