@@ -1,5 +1,5 @@
 use std::fmt::{Debug};
-use std::ops::{Index, IndexMut, Mul};
+use std::ops::{Index, IndexMut, Mul, Add, Sub};
 
 #[repr(C)]
 #[derive(PartialEq, Copy, Clone, Debug)]
@@ -50,4 +50,20 @@ impl Mul<f32> for Vector2 {
     type Output = Vector2;
 
     fn mul(self, rhs: f32) -> Self::Output { Vector2::new(self.x * rhs, self.y * rhs) }
+}
+
+impl Add<Vector2> for Vector2 {
+    type Output = Vector2;
+
+    fn add(self, rhs: Vector2) -> Self::Output { 
+        Vector2::new(self.x + rhs.x, self.y + rhs.y)
+    }
+}
+
+impl Sub<Vector2> for Vector2 {
+    type Output = Vector2;
+
+    fn sub(self, rhs: Vector2) -> Self::Output {
+        Vector2::new(self.x - rhs.x, self.y - rhs.y)
+    }
 }
