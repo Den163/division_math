@@ -1,4 +1,4 @@
-use std::fmt::{Debug};
+use std::fmt::Debug;
 use std::ops::{Index, IndexMut, Mul, Add, Sub};
 
 #[repr(C)]

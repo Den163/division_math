@@ -1,4 +1,5 @@
 use std::fmt::{Debug, Display, Formatter};
+use std::mem::MaybeUninit;
 use std::ops::{Index, IndexMut, Mul};
 use crate::{Vector4};
 
@@ -184,12 +185,23 @@ impl Mul<Matrix4x4> for Matrix4x4 {
 
     #[inline]
     fn mul(self, rhs: Matrix4x4) -> Self::Output {
-        Matrix4x4::from_columns(
-            self[0] * rhs[0],
-            self[1] * rhs[1],
-            self[2] * rhs[2],
-            self[3] * rhs[3],
-        )
+        let mut result = Matrix4x4::zero();
+
+        for i in 0..4 {
+            for j in 0..4 {
+                let mut sum = 0.;
+                let cj = &rhs[j];
+                let resj = &mut result[j];
+
+                for k in 0..4 {
+                    sum += self[k][i] * cj[k];
+                }
+                
+                resj[i] = sum;
+            }
+        }
+
+        result
     }
 }
 
