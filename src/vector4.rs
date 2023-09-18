@@ -1,4 +1,4 @@
-use crate::{Matrix4x4, Vector2, Vector3};
+use crate::{Vector2, Vector3};
 use std::fmt::{Debug, Display, Formatter};
 use std::ops::{Add, Div, Index, IndexMut, Mul, Neg, Sub};
 
@@ -164,19 +164,6 @@ impl Mul<f32> for Vector4 {
     #[inline]
     fn mul(self, rhs: f32) -> Self::Output {
         Vector4::new(self.x * rhs, self.y * rhs, self.z * rhs, self.w * rhs)
-    }
-}
-
-impl Mul<Matrix4x4> for Vector4 {
-    type Output = Vector4;
-
-    fn mul(self, rhs: Matrix4x4) -> Self::Output {
-        return Vector4::new(
-            Vector4::dot(self, rhs[0]),
-            Vector4::dot(self, rhs[1]),
-            Vector4::dot(self, rhs[2]),
-            Vector4::dot(self, rhs[3]),
-        );
     }
 }
 

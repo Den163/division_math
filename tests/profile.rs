@@ -35,10 +35,9 @@ mod tests {
 
     fn bench_mat() {
         let set = (0..10000000).map(|_i| {
-            Matrix4x4::scale(Vector4::from_xyz_w(
-                Vector3::new(get_random_float(), get_random_float(), get_random_float()),
-                1.
-            ))
+            Matrix4x4::scale(
+                Vector3::new(get_random_float(), get_random_float(), get_random_float())
+            )
         }).collect();
 
         let time_before = time::SystemTime::now();

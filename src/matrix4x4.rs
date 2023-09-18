@@ -1,8 +1,6 @@
+use crate::{Vector3, Vector4};
 use std::fmt::{Debug, Display, Formatter};
-use std::mem::MaybeUninit;
 use std::ops::{Index, IndexMut, Mul};
-use crate::{Vector4};
-
 
 #[derive(PartialEq, Copy, Clone)]
 #[repr(C)]
@@ -36,20 +34,52 @@ impl Matrix4x4 {
     }
 
     #[inline]
-    pub fn scale(scale: Vector4) -> Matrix4x4 {
+    pub fn scale(scale: Vector3) -> Matrix4x4 {
         Matrix4x4 {
             c0: Vector4::new(scale.x, 0., 0., 0.),
             c1: Vector4::new(0., scale.y, 0., 0.),
             c2: Vector4::new(0., 0., scale.z, 0.),
-            c3: Vector4::new(0., 0., 0., scale.w)
+            c3: Vector4::new(0., 0., 0., 1.),
         }
     }
 
     #[inline]
-    pub fn zero() -> Matrix4x4 { Matrix4x4::all(0.) }
+    pub fn translation(t: Vector3) -> Matrix4x4 {
+        Matrix4x4 {
+            c0: Vector4::new(1., 0., 0., 0.),
+            c1: Vector4::new(0., 1., 0., 0.),
+            c2: Vector4::new(0., 0., 1., 0.),
+            c3: Vector4::new(t.x, t.y, t.z, 1.),
+        }
+    }
 
     #[inline]
-    pub fn ortho(left: f32, right: f32, bottom: f32, top: f32, near: f32, far: f32) -> Self {
+    pub fn zero() -> Matrix4x4 {
+        Matrix4x4::all(0.)
+    }
+
+    #[inline]
+    pub fn ortho(left: f32, right: f32, bottom: f32, top: f32) -> Self {
+        let dx = 1. / (right - left);
+        let dy = 1. / (top - bottom);
+
+        Matrix4x4::from_columns(
+            Vector4::new(2. * dx, 0., 0., 0.),
+            Vector4::new(0., 2. * dy, 0., 0.),
+            Vector4::new(0., 0., -1., 0.),
+            Vector4::new(-(right + left) * dx, -(top + bottom) * dy, 0., 1.),
+        )
+    }
+
+    #[inline]
+    pub fn ortho_with_near_far(
+        left: f32,
+        right: f32,
+        bottom: f32,
+        top: f32,
+        near: f32,
+        far: f32,
+    ) -> Self {
         let dx = 1. / (right - left);
         let dy = 1. / (top - bottom);
         let dz = 1. / (far - near);
@@ -57,8 +87,8 @@ impl Matrix4x4 {
         Matrix4x4::from_columns(
             Vector4::new(2. * dx, 0., 0., -(right + left) * dx),
             Vector4::new(0., 2. * dy, 0., -(top + bottom) * dy),
-            Vector4::new(0., 0., dz, -near * dz),
-            Vector4::new(0., 0., 0., 1.)
+            Vector4::new(0., 0., -2. * dz, -(far + near) * dz),
+            Vector4::new(0., 0., 0., 1.),
         )
     }
 
@@ -128,11 +158,10 @@ impl Matrix4x4 {
 
         let sign_a = Vector4::new(1., -1., 1., -1.);
         let sign_b = Vector4::new(-1., 1., -1., 1.);
-        let inverse = Matrix4x4::from_columns(
-            inv0 * sign_a, inv1 * sign_b, inv2 * sign_a, inv3 * sign_b);
+        let inverse =
+            Matrix4x4::from_columns(inv0 * sign_a, inv1 * sign_b, inv2 * sign_a, inv3 * sign_b);
 
-        let row0 = Vector4::new(
-            inverse.c0.x, inverse.c1.x, inverse.c2.x, inverse.c3.x);
+        let row0 = Vector4::new(inverse.c0.x, inverse.c1.x, inverse.c2.x, inverse.c3.x);
 
         let dot0 = c0 * row0;
         let dot1 = (dot0.x + dot0.y) + (dot0.z + dot0.w);
@@ -152,7 +181,7 @@ impl Index<usize> for Matrix4x4 {
 
         unsafe {
             let ptr = self as *const Matrix4x4 as *const Vector4;
-            & *ptr.add(index)
+            &*ptr.add(index)
         }
     }
 }
@@ -174,9 +203,7 @@ impl Mul<f32> for Matrix4x4 {
 
     #[inline]
     fn mul(self, rhs: f32) -> Self::Output {
-        Matrix4x4::from_columns(
-            self[0] * rhs, self[1] * rhs, self[2] * rhs, self[3] * rhs,
-        )
+        Matrix4x4::from_columns(self[0] * rhs, self[1] * rhs, self[2] * rhs, self[3] * rhs)
     }
 }
 
@@ -185,23 +212,44 @@ impl Mul<Matrix4x4> for Matrix4x4 {
 
     #[inline]
     fn mul(self, rhs: Matrix4x4) -> Self::Output {
-        let mut result = Matrix4x4::zero();
+        let a0 = self[0];
+        let a1 = self[1];
+        let a2 = self[2];
+        let a3 = self[3];
 
-        for i in 0..4 {
-            for j in 0..4 {
-                let mut sum = 0.;
-                let cj = &rhs[j];
-                let resj = &mut result[j];
+        let b0 = rhs[0];
+        let b1 = rhs[1];
+        let b2 = rhs[2];
+        let b3 = rhs[3];
 
-                for k in 0..4 {
-                    sum += self[k][i] * cj[k];
-                }
-                
-                resj[i] = sum;
-            }
-        }
+        Matrix4x4::from_columns(
+            a0 * b0[0] + a1 * b0[1] + a2 * b0[2] + a3 * b0[3],
+            a0 * b1[0] + a1 * b1[1] + a2 * b1[2] + a3 * b1[3],
+            a0 * b2[0] + a1 * b2[1] + a2 * b2[2] + a3 * b2[3],
+            a0 * b3[0] + a1 * b3[1] + a2 * b3[2] + a3 * b3[3],
+        )
+    }
+}
 
-        result
+impl Mul<Vector4> for Matrix4x4 {
+    type Output = Vector4;
+
+    fn mul(self, rhs: Vector4) -> Self::Output {
+        let v0 = rhs[0];
+        let v1 = rhs[1];
+        let v2 = rhs[2];
+        let v3 = rhs[3];
+        let m0 = self[0];
+        let m1 = self[1];
+        let m2 = self[2];
+        let m3 = self[3];
+
+        return Vector4::new(
+            m0[0] * v0 + m1[0] * v1 + m2[0] * v2 + m3[0] * v3,
+            m0[1] * v0 + m1[1] * v1 + m2[1] * v2 + m3[1] * v3,
+            m0[2] * v0 + m1[2] * v1 + m2[2] * v2 + m3[2] * v3,
+            m0[3] * v0 + m1[3] * v1 + m2[3] * v2 + m3[3] * v3,
+        );
     }
 }
 
@@ -221,4 +269,3 @@ impl Display for Matrix4x4 {
         Debug::fmt(self, f)
     }
 }
-
