@@ -1,6 +1,6 @@
 use std::arch::aarch64::{float32x4_t, vaddq_f32, vdivq_f32, vld1q_f32, vmulq_f32, vmulq_n_f32, vst1q_f32, vsubq_f32};
 use std::mem::MaybeUninit;
-use crate::{Vector4};
+use crate::Vector4;
 
 #[cfg(target_feature = "neon")]
 impl Vector4 {

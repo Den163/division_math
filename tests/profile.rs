@@ -9,7 +9,7 @@ mod tests {
     }
 
     fn bench_vec() {
-        let vec_set = (0..10000000).map(|_i| {
+        let vec_set = (0..100000).map(|_i| {
             Vector4::new(get_random_float(), get_random_float(),
                          get_random_float(), get_random_float())
         }).collect();

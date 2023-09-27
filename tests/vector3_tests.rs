@@ -25,7 +25,7 @@ mod tests {
         let v1 = Vector3::all(2f32);
         let norm = v1.normalized();
 
-        assert!(math::approx(norm.magnitude(), 1.));
+        assert!(math::approx(norm.length(), 1.));
     }
 
     #[test]
