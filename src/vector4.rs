@@ -1,5 +1,3 @@
-use crate::{Vector2, Vector3};
-
 #[derive(PartialEq, Copy, Clone, Debug)]
 #[repr(C)]
 pub struct Vector4 {
@@ -10,11 +8,6 @@ pub struct Vector4 {
 }
 
 impl Vector4 {
-    #[inline]
-    pub fn new(x: f32, y: f32, z: f32, w: f32) -> Vector4 {
-        Vector4 { x, y, z, w }
-    }
-
     #[inline]
     pub fn dot(l: Vector4, r: Vector4) -> f32 {
         l.x * r.x + l.y * r.y + l.z * r.z + l.w * r.w

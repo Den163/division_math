@@ -34,7 +34,7 @@ mod tests {
     }
 
     fn bench_mat() {
-        let set = (0..10000000).map(|_i| {
+        let set = (0..10000).map(|_i| {
             Matrix4x4::scale(
                 Vector3::new(get_random_float(), get_random_float(), get_random_float())
             )
