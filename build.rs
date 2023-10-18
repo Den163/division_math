@@ -31,7 +31,8 @@ fn main() {
 fn create_vector_fields_swizzles() -> String {
     let vec_dims = [2, 3, 4];
     let mut str = String::new();
-    str.write_str("/*** This code was generated automatically ***/\n\n").unwrap();
+    str.write_str("/*** This code was generated automatically ***/\n\n")
+        .unwrap();
 
     for impl_dim in vec_dims {
         str.write_fmt(format_args!("impl Vector{} {{\n", impl_dim))
@@ -91,7 +92,9 @@ fn create_vec_math() -> String {
     let mut result = String::new();
     let vec_dims = [2, 3, 4];
 
-    result.write_str("/*** This code was generated automatically ***/\n\n").unwrap();
+    result
+        .write_str("/*** This code was generated automatically ***/\n\n")
+        .unwrap();
 
     for dim in vec_dims {
         let vec_type = format!("Vector{dim}");
@@ -129,12 +132,19 @@ fn create_vec_math() -> String {
         result.write_str("\n}\n").unwrap();
 
         for s in [
-            create_component_wise_vec_func("Add", "+", dim),
-            create_component_wise_vec_func("Sub", "-", dim),
-            create_component_wise_vec_func("Mul", "*", dim),
-            create_component_wise_vec_func("Div", "/", dim),
-            create_scalar_vec_func("Mul", "*", dim),
-            create_scalar_vec_func("Div", "/", dim),
+            create_component_wise_vec_func_simd("Add", "+", dim),
+            create_component_wise_vec_func_simd("Sub", "-", dim),
+            create_component_wise_vec_func_simd("Mul", "*", dim),
+            create_component_wise_vec_func_simd("Div", "/", dim),
+            create_component_wise_vec_func("Rem", "%", dim),
+            create_scalar_vec_func_simd("Mul", "*", dim),
+            create_scalar_vec_func_simd("Div", "/", dim),
+            create_scalar_vec_func("Rem", "%", dim),
+            create_typed_op_assign_func("AddAssign", "add_assign", "+", "Self", dim),
+            create_typed_op_assign_func("SubAssign", "sub_assign", "-", "Self", dim),
+            create_op_assign_funcs("MulAssign", "mul_assign", "*", dim),
+            create_op_assign_funcs("DivAssign", "div_assign", "/", dim),
+            create_op_assign_funcs("RemAssign", "rem_assign", "%", dim),
             create_vec_index_func(dim),
             create_vec_index_mut_func(dim),
             create_neg_func(dim),
@@ -183,7 +193,11 @@ fn create_expanded_math_func(
 }
 
 fn create_new_func(dim: usize) -> String {
-    let params_list = VEC_FIELDS.iter().take(dim).map(|f| format!("{f}: f32")).join(",");
+    let params_list = VEC_FIELDS
+        .iter()
+        .take(dim)
+        .map(|f| format!("{f}: f32"))
+        .join(",");
     let args_list = VEC_FIELDS.iter().take(dim).join(",");
 
     format!("pub fn new({params_list}) -> Vector{dim} {{ Vector{dim} {{ {args_list} }} }}")
@@ -255,12 +269,27 @@ fn create_c_ptr_funcs(dim: usize) -> String {
     )
 }
 
-fn create_component_wise_vec_func(
+fn create_component_wise_vec_func_simd(
     operator_trait: &str,
     operator_token: &str,
     dim: usize,
 ) -> String {
     let simd_prefix = get_simd_prefix(dim);
+    let func = create_component_wise_vec_func(operator_trait, operator_token, dim);
+
+    format!(
+        "
+        {simd_prefix}
+        {func}
+        "
+    )
+}
+
+fn create_component_wise_vec_func(
+    operator_trait: &str,
+    operator_token: &str,
+    dim: usize,
+) -> String {
     let func_name = operator_trait.to_lowercase();
     let new_vec_result_args = VEC_FIELDS
         .iter()
@@ -270,7 +299,6 @@ fn create_component_wise_vec_func(
 
     format!(
         "
-            {simd_prefix}
             impl std::ops::{operator_trait}<Vector{dim}> for Vector{dim} {{
                 type Output = Vector{dim};
 
@@ -282,8 +310,19 @@ fn create_component_wise_vec_func(
     )
 }
 
-fn create_scalar_vec_func(operator_trait: &str, operator_token: &str, dim: usize) -> String {
+fn create_scalar_vec_func_simd(operator_trait: &str, operator_token: &str, dim: usize) -> String {
     let simd_prefix = get_simd_prefix(dim);
+    let func = create_scalar_vec_func(operator_trait, operator_token, dim);
+
+    format!(
+        "
+        {simd_prefix}
+        {func}
+        "
+    )
+}
+
+fn create_scalar_vec_func(operator_trait: &str, operator_token: &str, dim: usize) -> String {
     let func_name = operator_trait.to_lowercase();
     let new_vec_result_args = VEC_FIELDS
         .iter()
@@ -293,7 +332,6 @@ fn create_scalar_vec_func(operator_trait: &str, operator_token: &str, dim: usize
 
     format!(
         "
-            {simd_prefix}
             impl std::ops::{operator_trait}<f32> for Vector{dim} {{
                 type Output = Vector{dim};
 
@@ -369,5 +407,40 @@ fn create_neg_func(dim: usize) -> String {
                 }}
             }}
         "
+    )
+}
+
+fn create_op_assign_funcs(
+    op_trait: &str,
+    func_name: &str,
+    op_token: &str,
+    dim: usize,
+) -> String {
+    let vec_op_func = create_typed_op_assign_func(op_trait, func_name, op_token, "Self", dim);
+    let scalar_op_func = create_typed_op_assign_func(op_trait, func_name, op_token, "f32", dim);
+
+    format!(
+        "
+        {vec_op_func}
+        {scalar_op_func}
+        "
+    )
+}
+
+fn create_typed_op_assign_func(
+    op_trait: &str,
+    func_name: &str,
+    op_token: &str,
+    rhs_type: &str,
+    dim: usize,
+) -> String {
+    format!(
+        "
+        impl std::ops::{op_trait}<{rhs_type}> for Vector{dim} {{
+            fn {func_name}(&mut self, rhs: {rhs_type}) {{
+                *self = * self {op_token} rhs
+            }}
+        }}
+    "
     )
 }

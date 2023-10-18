@@ -37,4 +37,64 @@ mod tests {
 
         assert_eq!(v.z, expected);
     }
+
+    #[test]
+    fn add_assign() {
+        let origin = Vector4::new(1., 2., 3., 4.);
+        let add = Vector4::one();
+        let expected = origin + add;
+
+        let mut v = origin;
+        v += add;
+
+        assert_eq!(v, expected);
+    }
+
+    #[test]
+    fn sub_assign() {
+        let origin = Vector4::new(1., 2., 3., 4.);
+        let sub = Vector4::one();
+        let expected = origin - sub;
+
+        let mut v = origin;
+        v -= sub;
+
+        assert_eq!(v, expected);
+    }
+
+    #[test]
+    fn mul_assign() {
+        let origin = Vector4::new(1., 2., 3., 4.);
+        let mul = Vector4::all(2.);
+        let expected = origin * mul;
+
+        let mut v = origin;
+        v *= mul;
+
+        assert_eq!(v, expected);
+    }
+
+    #[test]
+    fn div_assign() {
+        let origin = Vector4::new(1., 2., 3., 4.);
+        let div = Vector4::all(2.);
+        let expected = origin / div;
+
+        let mut v = origin;
+        v /= div;
+
+        assert_eq!(v, expected);
+    }
+
+    #[test]
+    fn rem_assign() {
+        let origin = Vector4::new(1., 2., 3., 4.);
+        let rem = Vector4::all(2.);
+        let expected = origin % rem;
+
+        let mut v = origin;
+        v %= rem;
+
+        assert_eq!(v, expected);
+    }
 }
