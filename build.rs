@@ -282,6 +282,22 @@ fn create_clamp_funcs(dim: usize) -> String {
         pub fn clamp(self, min: {ty}, max: {ty}) -> {ty} {{
             {ty}::new({construction})
         }}
+
+        #[inline]
+        pub fn clamp_length(self, min: f32, max: f32) -> {ty} {{
+            let sqr_min = min * min;
+            let sqr_max = max * max;
+
+            let len_sqr = self.length_sqr();
+
+            if len_sqr < sqr_min {{
+                self.normalized() * sqr_min.sqrt()
+            }} else if len_sqr > sqr_max {{
+                self.normalized() * sqr_max.sqrt()
+            }} else {{
+                return self;
+            }}
+        }}
     ")
 }
 

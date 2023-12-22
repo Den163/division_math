@@ -45,4 +45,15 @@ mod tests {
 
         assert_eq!(expected, actual)
     }
+
+    #[test]
+    fn vector_clamp_length() {
+        let v = Vector3::new(3., 3., 3.);
+        let expected_len = (3f32 * 3f32).sqrt() / 2.;
+
+        let v = v.clamp_length(0., expected_len);
+        let actual_len = v.length();
+
+        assert!(approx(actual_len, expected_len));
+    }
 }
