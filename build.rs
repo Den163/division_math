@@ -124,7 +124,8 @@ fn create_vec_math() -> String {
             create_length_funcs(dim),
             create_approx_func(dim),
             create_normalized_func(dim),
-            create_c_ptr_funcs(dim),
+            create_ptr_funcs(dim),
+            create_clamp_funcs(dim),
         ] {
             result.write_str(s.as_str()).unwrap();
         }
@@ -148,6 +149,7 @@ fn create_vec_math() -> String {
             create_vec_index_func(dim),
             create_vec_index_mut_func(dim),
             create_neg_func(dim),
+            create_from_tuple_impl(dim),
         ] {
             result.write_str(s.as_str()).unwrap();
         }
@@ -254,19 +256,33 @@ fn create_normalized_func(dim: usize) -> String {
     format!("#[inline] pub fn normalized(self) -> Vector{dim} {{ self / self.length() }}")
 }
 
-fn create_c_ptr_funcs(dim: usize) -> String {
+fn create_ptr_funcs(dim: usize) -> String {
     format!(
         "
             #[inline]
-            pub fn as_c_ptr(&self) -> *const f32 {{
+            pub fn as_ptr(&self) -> *const f32 {{
                 self as *const Vector{dim} as *const f32
             }}
             #[inline]
-            pub fn as_c_mut_ptr(&mut self) -> *mut f32 {{
+            pub fn as_mut_ptr(&mut self) -> *mut f32 {{
                 self as *mut Vector{dim} as *mut f32
             }}
         "
     )
+}
+
+fn create_clamp_funcs(dim: usize) -> String {
+    let ty = format!("Vector{dim}");
+    let construction = VEC_FIELDS.iter().take(dim)
+        .map(|f| format!("self.{f}.clamp(min.{f}, max.{f})"))
+        .join(",");
+
+    format!("
+        #[inline]
+        pub fn clamp(self, min: {ty}, max: {ty}) -> {ty} {{
+            {ty}::new({construction})
+        }}
+    ")
 }
 
 fn create_component_wise_vec_func_simd(
@@ -442,5 +458,21 @@ fn create_typed_op_assign_func(
             }}
         }}
     "
+    )
+}
+
+fn create_from_tuple_impl(dim: usize) -> String {
+    let tuple_type = format!("({})",(0..dim).map(|_| "f32").join(","));
+    let fields = VEC_FIELDS.iter().take(dim).join(",");
+
+    format!(
+        "
+            impl From<{tuple_type}> for Vector{dim} {{
+                #[inline]
+                fn from(({fields}): {tuple_type}) -> Vector{dim} {{
+                    Vector{dim}::new({fields})
+                }}
+            }}
+        "
     )
 }

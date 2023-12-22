@@ -1,12 +1,12 @@
 mod tests {
-    use division_math::{math, Vector3};
+    use division_math::{Vector3, approx, lerp};
 
     #[test]
     pub fn lerp_tests() {
-        assert!(math::approx(math::lerp(0., 1., 0.5), 0.5));
-        assert!(math::approx(math::lerp(0.5, 1., 0.5), 0.75));
-        assert!(math::approx(math::lerp(0., 1., 0.), 0.));
-        assert!(math::approx(math::lerp(0., 1., 1.), 1.));
+        assert!(approx(lerp(0., 1., 0.5), 0.5));
+        assert!(approx(lerp(0.5, 1., 0.5), 0.75));
+        assert!(approx(lerp(0., 1., 0.), 0.));
+        assert!(approx(lerp(0., 1., 1.), 1.));
     }
 
     #[test]

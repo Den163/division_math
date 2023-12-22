@@ -1,5 +1,5 @@
 mod tests {
-    use division_math::{math, Vector3};
+    use division_math::{Vector3, approx};
 
     #[test]
     fn vector_to_scalar_mul() {
@@ -25,7 +25,7 @@ mod tests {
         let v1 = Vector3::all(2f32);
         let norm = v1.normalized();
 
-        assert!(math::approx(norm.length(), 1.));
+        assert!(approx(norm.length(), 1.));
     }
 
     #[test]
@@ -34,5 +34,15 @@ mod tests {
         let up = Vector3::up();
 
         assert_eq!(Vector3::cross(right, up), Vector3::forward());
+    }
+
+    #[test]
+    fn vector_from_tuple() {
+        let x = (1., 2., 3.);
+
+        let expected = Vector3::new(1., 2., 3.);
+        let actual = Vector3::from(x);
+
+        assert_eq!(expected, actual)
     }
 }

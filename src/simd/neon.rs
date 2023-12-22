@@ -75,7 +75,7 @@ impl Vector4 {
     #[inline(always)]
     fn load_to_neon(&self) -> float32x4_t {
         unsafe {
-            vld1q_f32(self.as_c_ptr())
+            vld1q_f32(self.as_ptr())
         }
     }
 }
